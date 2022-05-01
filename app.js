@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import { spawn } from 'child_process';
 import {
   InteractionType,
   InteractionResponseType,
@@ -7,10 +8,15 @@ import {
   MessageComponentTypes,
   ButtonStyleTypes,
 } from 'discord-interactions';
-import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
+import {
+  VerifyDiscordRequest,
+  getRandomEmoji,
+  DiscordRequest,
+} from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
 import {
   CHALLENGE_COMMAND,
+  SCRAPE_COMMAND,
   TEST_COMMAND,
   HasGuildCommands,
 } from './commands.js';
@@ -52,6 +58,24 @@ app.post('/interactions', async function (req, res) {
         data: {
           // Fetches a random emoji to send from a helper function
           content: 'hello world ' + getRandomEmoji(),
+        },
+      });
+    }
+    // "scrape" guild command
+    if (name === 'scrape') {
+      let output = '';
+      const scraper = spawn('./script.sh');
+      scraper.stdout.on('data', function (data) {
+        console.log(data);
+        output = String.concat(output, data)
+      });
+
+      // Send a message into the channel where command was triggered from
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          // Fetches a random emoji to send from a helper function
+          content: output,
         },
       });
     }
@@ -180,5 +204,6 @@ app.listen(3000, () => {
   HasGuildCommands(process.env.APP_ID, process.env.GUILD_ID, [
     TEST_COMMAND,
     CHALLENGE_COMMAND,
+    SCRAPE_COMMAND,
   ]);
 });

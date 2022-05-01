@@ -44,7 +44,7 @@ export async function InstallGuildCommand(appId, guildId, command) {
 }
 
 // Get the game choices from game.js
-function createCommandChoices() {
+function createChallengeCommandChoices() {
   const choices = getRPSChoices();
   const commandChoices = [];
 
@@ -75,8 +75,16 @@ export const CHALLENGE_COMMAND = {
       name: 'object',
       description: 'Pick your object',
       required: true,
-      choices: createCommandChoices(),
+      choices: createChallengeCommandChoices(),
     },
   ],
+  type: 1,
+};
+
+
+// Command containing options
+export const SCRAPE_COMMAND = {
+  name: 'scrape',
+  description: 'Run scraper for Pi prices',
   type: 1,
 };
