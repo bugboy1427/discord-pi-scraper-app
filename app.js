@@ -63,11 +63,11 @@ app.post('/interactions', async function (req, res) {
     }
     // "scrape" guild command
     if (name === 'scrape') {
-      let output = '';
+      let output = 'n/a';
       const scraper = spawn('./script.sh');
       scraper.stdout.on('data', function (data) {
         console.log(data);
-        output = String.concat(output, data)
+        output = String(data);
       });
 
       // Send a message into the channel where command was triggered from
